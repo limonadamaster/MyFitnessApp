@@ -1,3 +1,2 @@
 # MyFitnessApp
-Spring boot fitness application 
-src in there are React files 
+Spring Boot - React - MySql application for tracking calories , workout volume and more...
