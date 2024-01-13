@@ -27,14 +27,11 @@ public class CalorieIntakeController {
 
         @PostMapping("/add")
         ResponseEntity<HttpStatus> addMeal(@RequestBody MealRequest mealRequest){
-                 if(!HttpStatus.OK.equals(calorieIntakeServiceImpl.addCalorieIntakeForDay(
-                         mealRequest.getUserName(),
-                         mealRequest.getFoodName(),
-                         mealRequest.getServingSize()))){
-
-                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                 if(!HttpStatus.OK.equals(calorieIntakeServiceImpl.addCalorieIntakeForDay(mealRequest))){
+                        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
                  }
-            return new ResponseEntity<>(HttpStatus.OK);
+                 //If an issue exists check enumeration of MealRequest fields are arranged 
+                        return new ResponseEntity<>(HttpStatus.OK);
         }
 
             @GetMapping("/{userName}")
