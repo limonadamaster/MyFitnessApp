@@ -2,6 +2,7 @@ package com.example.MyFitnessApp.service.implementation;
 
 import com.example.MyFitnessApp.dto.CalorieIntakeDTO;
 import com.example.MyFitnessApp.dto.EntityDtoConverter;
+import com.example.MyFitnessApp.dto.MealRequest;
 import com.example.MyFitnessApp.model.CalorieIntake;
 import com.example.MyFitnessApp.model.Credentential;
 import com.example.MyFitnessApp.model.Food;
@@ -35,25 +36,25 @@ public class CalorieIntakeServiceImpl implements CalorieIntakeService {
     }
 
     @Override
-   public HttpStatus addCalorieIntakeForDay(String userName , String foodName, float servingSize){
+   public HttpStatus addCalorieIntakeForDay(MealRequest mealRequest){
 
-        Credentential credentential= credententialRepository.findByUsername(userName);
-        Food food = foodRepository.findByName(foodName);
+
+        Credentential credentential= credententialRepository.findByUsername(mealRequest.getUserName());
+        Food food = foodRepository.findByName(mealRequest.getFoodName());
         if(credentential.equals(null)&&food.equals(null)){
             return HttpStatus.NOT_FOUND;
         }
         LocalDate today =LocalDate.now();
 
         CalorieIntake calorieIntake = calorieIntakeRepository
-                .findByCredentential_UsernameAndFood_NameAndIntakeDate(userName,foodName,today);
+                .findByCredentential_UsernameAndFood_NameAndIntakeDate(mealRequest.getUserName(), mealRequest.getFoodName(), today);
 
        if (calorieIntake != null) {
            // Update existing calorie intake for today
            calorieIntake.setTotalCalories(
-                   calculateServingSize(food.getCalories(),servingSize)
+                   calculateServingSize(food.getCalories(), mealRequest.getServingSize())
            );
            calorieIntakeRepository.save(calorieIntake);
-        //calorieIntake.setTotalCalories(food.getCalories());
 
        } else {
            // Create new calorie intake entry for specific day
@@ -61,7 +62,7 @@ public class CalorieIntakeServiceImpl implements CalorieIntakeService {
            newCalorieIntake.setCredentential(credentential);
            newCalorieIntake.setFood(food);
            newCalorieIntake.setIntakeDate(today);
-           newCalorieIntake.setTotalCalories(calculateServingSize(food.getCalories(),servingSize));
+           newCalorieIntake.setTotalCalories(calculateServingSize(food.getCalories(), mealRequest.getServingSize()));
            calorieIntakeRepository.save(newCalorieIntake);
    }
 
